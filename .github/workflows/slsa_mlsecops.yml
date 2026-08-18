@@ -1,0 +1,48 @@
+name: MLSecOps - SLSA Build Track L2
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-generate:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+
+    steps:
+      - name: Source code checkout
+        uses: actions/checkout@v7
+
+      - name: Python Setup
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.10'
+        
+      - name: Training simulation and ML-BOM generation
+        run: |
+          echo "## starting pipeline ##"
+          echo "pesi modello" > pesi.pt
+          echo '{"bomFormat": "CycloneDX", "specVersion": "1.5", "metadata": {"component": {"name": "aereo_yolo_final"}}}' > aibom.json
+          echo "## tutto fake ##"
+
+      - name: SLSA Provenance generation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            pesi.pt
+            aibom.json
+
+      - name: Artifact upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: ml-artifacts
+          path: |
+            pesi.pt
+            aibom.json
