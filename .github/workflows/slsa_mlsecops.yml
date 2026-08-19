@@ -30,11 +30,18 @@ jobs:
         run: |
           python mock_train.py
 
-      - name: SLSA Provenance generation
+      - name: ML-BOM attestation generation
         uses: actions/attest@v4
         with:
           subject-path: 'yolo_trained_model.pt'
           sbom-path: 'mlbom.json'
+
+      - name: SLSA Provenance generation
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            yolo_trained_model.pt
+            mlbom.json
 
       - name: Artifact upload
         uses: actions/upload-artifact@v7
