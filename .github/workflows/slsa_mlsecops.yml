@@ -15,6 +15,7 @@ jobs:
       id-token: write
       contents: read
       attestations: write
+      artifact-metadata: write
 
     steps:
       - name: Source code checkout
@@ -30,11 +31,10 @@ jobs:
           python mock_train.py
 
       - name: SLSA Provenance generation
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest@v4
         with:
-          subject-path: |
-            yolo_trained_model.pt
-            mlbom.json
+          subject-path: 'yolo_trained_model.pt'
+          sbom-path: 'mlbom.json'
 
       - name: Artifact upload
         uses: actions/upload-artifact@v7
