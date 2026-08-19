@@ -27,22 +27,19 @@ jobs:
         
       - name: Training simulation and ML-BOM generation
         run: |
-          echo "## starting pipeline ##"
-          echo "pesi modello" > pesi.pt
-          echo '{"bomFormat": "CycloneDX", "specVersion": "1.5", "metadata": {"component": {"name": "aereo_yolo_final"}}}' > aibom.json
-          echo "## tutto fake ##"
+          python mock_train.py
 
       - name: SLSA Provenance generation
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: |
-            pesi.pt
-            aibom.json
+            yolo_trained_model.pt
+            mlbom.json
 
       - name: Artifact upload
         uses: actions/upload-artifact@v7
         with:
           name: ml-artifacts
           path: |
-            pesi.pt
-            aibom.json
+            yolo_trained_model.pt
+            mlbom.json
